@@ -74,10 +74,9 @@ All times are interpreted in the device's local timezone, stored per log in `tz`
 
 To keep morning logging under **15 seconds**, secondary factors are single-tap pill toggles, all defaulting to off:
 
-* **Late Meal (`late_meal`):** Eaten within 3 hours of bedtime (relevant on a later Spanish dinner schedule).
+* **Meal after 20:00 (`late_meal`):** Dinner or a substantial meal after 20:00 (relevant on a later Spanish dinner schedule).
 * **Late Caffeine (`late_caffeine`):** Caffeine after 14:00.
 * **Alcohol (`alcohol`):** Any alcohol (even 1–2 drinks measurably suppresses REM sleep).
-* **Screens / Work (`late_screen_work`):** Coding or bright screens within 60 min of bed.
 * **Room Too Warm (`room_too_warm`):** Thermal disruption.
 * **Hard Workout (`hard_workout`):** Intense training that day.
 * **Sick (`sick`):** You or the child unwell (major confounder—flagged nights can be excluded from Insights).
@@ -124,7 +123,6 @@ create table dormir.sleep_logs (
   late_caffeine boolean not null default false,
   late_meal boolean not null default false,
   alcohol boolean not null default false,
-  late_screen_work boolean not null default false,
   room_too_warm boolean not null default false,
   hard_workout boolean not null default false,
   sick boolean not null default false,
@@ -188,12 +186,12 @@ Saving a night is an **upsert on `sleep_date`**, so re-submitting the same morni
 * **Navigation:** Bottom tab bar — **Check-In** · **Insights** · **History**.
 * **Screen 1: Morning Check-In (Default Home)**
   * **Smart Defaults:** `bedtime_at` = 7-day rolling median bedtime (fallback `23:00` until 3 nights exist); `wake_time_at` = current time rounded to nearest 5 min; `creatine_10g` = previous day's value. If today's log already exists, the screen opens it in edit mode.
-  * **Missed Night Banner:** If yesterday's morning has no log, show a dismissible banner "Log yesterday?" that opens the form for that date (backfill).
+  * **Missed Night Banner:** If yesterday's morning has no log, show a banner "Log yesterday?" that opens the form for that date (backfill). Dismissing (✕) is remembered per date on the device, so that date is never asked about again.
   * **Sleep Card:** Bedtime / wake time, latency pills, night-wakings stepper.
   * **Co-Sleep Card:** Tapping *"{DORMIR_CHILD_NAME} came into bed"* smoothly expands an inline drawer (Framer Motion `AnimatePresence`) revealing:
     * **Arrival** quick-pills: `23:00`, `00:00`, `01:00`, `02:00`, `03:00`, `04:00`, `05:00` + custom (15-min wheel).
     * **Until** pills: `Morning` (= wake time, default) + custom.
-  * **Factor Toggles:** Tactile, high-contrast pills for `10g Creatine` (with optional timing sub-pill), `Late Meal`, `Caffeine >14:00`, `Alcohol`, `Screens`, `Too Warm`, `Hard Workout`, `Sick`.
+  * **Factor Toggles:** Tactile, high-contrast pills for `10g Creatine` (with optional timing sub-pill), `Meal after 20:00`, `Caffeine >14:00`, `Alcohol`, `Too Warm`, `Hard Workout`, `Sick`.
   * **Outcome Rating:** 5-step emoji/numeric selector for **Sleep Quality** and **Morning Energy** (both required to save).
   * **Primary CTA:** Full-width sticky bottom button (`Save Night`) with optimistic UI. On failure: revert state + toast with **Retry** (form contents are preserved; no offline queue in v1).
 

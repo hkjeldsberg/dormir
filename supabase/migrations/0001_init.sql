@@ -35,7 +35,6 @@ create table dormir.sleep_logs (
   late_caffeine boolean not null default false,
   late_meal boolean not null default false,
   alcohol boolean not null default false,
-  late_screen_work boolean not null default false,
   room_too_warm boolean not null default false,
   hard_workout boolean not null default false,
   sick boolean not null default false,

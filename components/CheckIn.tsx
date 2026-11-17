@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { AnimatePresence, motion } from 'motion/react'
 import { CheckInForm } from './CheckInForm'
 import { useLogs } from './LogsProvider'
@@ -17,18 +17,40 @@ function prettyDate(date: string): string {
   })
 }
 
+const DISMISS_KEY = 'dormir:backfill-dismissed'
+
+function readDismissed(): string | null {
+  try {
+    return localStorage.getItem(DISMISS_KEY)
+  } catch {
+    return null
+  }
+}
+
 export function CheckIn({ sticky }: { sticky: boolean }) {
   const today = useToday()
   const { logs } = useLogs()
   const [date, setDate] = useState<string | null>(null)
-  const [dismissed, setDismissed] = useState(false)
+  // The missed date whose reminder was dismissed; persisted so it never asks again for that date
+  const [dismissedDate, setDismissedDate] = useState<string | null>(null)
+  useEffect(() => setDismissedDate(readDismissed()), [])
 
   if (!today) return <div className="h-96 animate-pulse rounded-2xl bg-ink-card" aria-busy />
 
   const active = date ?? today
   const yesterday = addDays(today, -1)
   const hasAny = logs.length > 0
-  const missedYesterday = hasAny && !dismissed && active === today && !logs.some((l) => l.sleep_date === yesterday)
+  const missedYesterday =
+    hasAny && dismissedDate !== yesterday && active === today && !logs.some((l) => l.sleep_date === yesterday)
+
+  const dismiss = () => {
+    setDismissedDate(yesterday)
+    try {
+      localStorage.setItem(DISMISS_KEY, yesterday)
+    } catch {
+      // storage unavailable (private mode) — dismissal lasts for this session only
+    }
+  }
   const logged = logs.some((l) => l.sleep_date === active)
 
   return (
@@ -60,7 +82,7 @@ export function CheckIn({ sticky }: { sticky: boolean }) {
               <button type="button" onClick={() => setDate(yesterday)} className="text-left text-[15px] font-medium">
                 Yesterday isn’t logged. <span className="text-indigo">Log it →</span>
               </button>
-              <button type="button" aria-label="Dismiss" onClick={() => setDismissed(true)} className="px-2 text-label-muted">
+              <button type="button" aria-label="Dismiss" onClick={dismiss} className="px-2 text-label-muted">
                 ✕
               </button>
             </div>

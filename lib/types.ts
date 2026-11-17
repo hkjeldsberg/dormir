@@ -5,7 +5,6 @@ export const FACTOR_KEYS = [
   'late_meal',
   'late_caffeine',
   'alcohol',
-  'late_screen_work',
   'room_too_warm',
   'hard_workout',
   'sick',
@@ -13,10 +12,9 @@ export const FACTOR_KEYS = [
 export type FactorKey = (typeof FACTOR_KEYS)[number]
 
 export const FACTOR_LABELS: Record<FactorKey, string> = {
-  late_meal: 'Late Meal',
+  late_meal: 'Meal after 20:00',
   late_caffeine: 'Caffeine >14:00',
   alcohol: 'Alcohol',
-  late_screen_work: 'Screens',
   room_too_warm: 'Too Warm',
   hard_workout: 'Hard Workout',
   sick: 'Sick',
@@ -47,7 +45,6 @@ export interface SleepLog {
   late_caffeine: boolean
   late_meal: boolean
   alcohol: boolean
-  late_screen_work: boolean
   room_too_warm: boolean
   hard_workout: boolean
   sick: boolean

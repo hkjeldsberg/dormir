@@ -65,7 +65,6 @@ function makeLog(date: string, o: Partial<SleepLog> & { bed?: string; wake?: str
     late_caffeine: false,
     late_meal: false,
     alcohol: false,
-    late_screen_work: false,
     room_too_warm: false,
     hard_workout: false,
     sick: false,
