@@ -12,18 +12,19 @@ export const FACTOR_KEYS = [
 export type FactorKey = (typeof FACTOR_KEYS)[number]
 
 export const FACTOR_LABELS: Record<FactorKey, string> = {
-  late_meal: 'Meal after 20:00',
-  late_caffeine: 'Caffeine >14:00',
-  alcohol: 'Alcohol',
-  room_too_warm: 'Too Warm',
-  hard_workout: 'Hard Workout',
-  sick: 'Sick',
+  // Midnight Garden copy. Definitions (PRD §3): supper after 20:00, caffeine after 14:00, any alcohol
+  late_meal: 'Late supper',
+  late_caffeine: 'Afternoon coffee',
+  alcohol: 'Wine',
+  room_too_warm: 'Too warm',
+  hard_workout: 'Hard workout',
+  sick: 'Unwell',
 }
 
 export const LATENCY_LABELS: Record<SleepLatency, string> = {
-  lt_15: '< 15 min',
-  '15_30': '15–30 min',
-  gt_30: '> 30 min',
+  lt_15: '<15m',
+  '15_30': '15–30m',
+  gt_30: '>30m',
 }
 
 /** Row as stored in dormir.sleep_logs */

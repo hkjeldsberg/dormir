@@ -34,3 +34,12 @@
 2. Project Settings → API → Exposed schemas → add `dormir`
 3. `.env.local` from `.env.example` (APP_PASSWORD, SESSION_SECRET via `openssl rand -base64 48`, SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY, CHILD_NAME)
 4. `npm run dev` → Vercel: same env vars
+
+## Midnight Garden redesign (2026-11-17)
+- [x] Tokens sampled from `design/06 · Midnight Garden@2x.png`; EB Garamond + Cormorant (old-style numerals) + Work Sans
+- [x] Check-in: arch hero with flower, spelled-out duration, leaf pills, visit card, creatine cycle pill, moon ratings, leaf CTA
+- [x] Shell (serif tabs, rose underline), login, edit sheet, insights, history, overview restyled; emoji badges → dots
+- [x] Chart/heatmap ramp re-validated on #16291F (sage, 5 steps, all checks pass)
+- [x] Icons redrawn (flower in arch)
+- Verified: 15/15 tests, tsc, build, browser at 402px (iframe) + 1280px, save round-trip, no console errors
+- Lesson: Google-hosted EB Garamond subset lacks `onum`; Tailwind `font-*` utilities override component-layer classes

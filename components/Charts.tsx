@@ -4,12 +4,13 @@ import { useState } from 'react'
 import type { ChartPoint } from '@/lib/insights'
 import { addDays, formatDuration, formatNightAxis } from '@/lib/time'
 
-// Validated ordinal ramp (dataviz validator, dark, surface #1C1C1E) — must match tailwind `q`
-export const QUALITY_RAMP = ['#4a47a3', '#5b59c4', '#716fdc', '#8f8ded', '#b6b7f8']
-const UNRATED = '#48484A'
-const GRID = '#38383A'
-const AXIS_TEXT = '#8E8E93'
-const AMBER = '#F5B041'
+// Validated ordinal ramp (dataviz validator, dark, surface #16291F) — must match tailwind `q`
+export const QUALITY_RAMP = ['#3f6650', '#548069', '#6d9a81', '#8fb89a', '#bcd8c3']
+const UNRATED = '#2F4A3A'
+const GRID = '#2B4435'
+const AXIS_TEXT = '#A9B8AE'
+const ROSE = '#D9A6A0'
+const LINE = '#EDEFE6'
 
 const W = 640
 const H = 200
@@ -34,36 +35,36 @@ function Tooltip({ day, xPct }: { day: Day; xPct: number }) {
   const p = day.point
   return (
     <div
-      className="pointer-events-none absolute top-0 z-10 w-44 -translate-x-1/2 rounded-xl bg-ink-raised px-3 py-2 text-xs shadow-xl ring-1 ring-ink-line"
+      className="pointer-events-none absolute top-0 z-10 w-44 -translate-x-1/2 rounded-leaf bg-night px-3 py-2 text-xs border border-line shadow-xl"
       style={{ left: `clamp(88px, ${xPct}%, calc(100% - 88px))` }}
       role="status"
     >
-      <div className="font-semibold text-label">{day.date}</div>
+      <div className="font-serif text-[15px] text-cream">{day.date}</div>
       {p ? (
-        <dl className="mt-1 grid grid-cols-[1fr_auto] gap-x-2 text-label-secondary">
+        <dl className="mt-1 grid grid-cols-[1fr_auto] gap-x-2 text-mist">
           <dt>In bed</dt>
-          <dd className="text-label">{formatDuration(p.tib)}</dd>
+          <dd className="text-cream">{formatDuration(p.tib)}</dd>
           <dt>Bedtime</dt>
-          <dd className="text-label">{formatNightAxis(p.bedtime)}</dd>
-          <dt>Quality</dt>
-          <dd className="text-label">{p.quality ?? '—'}/5</dd>
-          <dt>Energy</dt>
-          <dd className="text-label">{p.energy ?? '—'}/5</dd>
+          <dd className="text-cream">{formatNightAxis(p.bedtime)}</dd>
+          <dt>Rest</dt>
+          <dd className="text-cream">{p.quality ?? '—'}/5</dd>
+          <dt>Vigour</dt>
+          <dd className="text-cream">{p.energy ?? '—'}/5</dd>
           {p.wakings != null && (
             <>
               <dt>Wakings</dt>
-              <dd className="text-label">{p.wakings}</dd>
+              <dd className="text-cream">{p.wakings}</dd>
             </>
           )}
           {p.coSleep && (
             <>
-              <dt>Co-sleep</dt>
-              <dd className="text-label">{formatDuration(p.coSleepMinutes)}</dd>
+              <dt>Visit</dt>
+              <dd className="text-cream">{formatDuration(p.coSleepMinutes)}</dd>
             </>
           )}
         </dl>
       ) : (
-        <div className="mt-1 text-label-muted">Not logged</div>
+        <div className="mt-1 text-mist">Not logged</div>
       )}
     </div>
   )
@@ -84,7 +85,7 @@ export function TimeInBedChart({ days }: { days: Day[] }) {
   return (
     <div className="relative">
       {hover != null && <Tooltip day={days[hover]} xPct={((PAD.left + colW * (hover + 0.5)) / W) * 100} />}
-      <svg viewBox={`0 0 ${W} ${H}`} className="h-auto w-full" role="img" aria-label="Time in bed per night, colored by sleep quality">
+      <svg viewBox={`0 0 ${W} ${H}`} className="h-auto w-full" role="img" aria-label="Time in bed per night, colored by rest">
         {ticks.map((t) => (
           <g key={t}>
             <line x1={PAD.left} x2={W - PAD.right} y1={y(t)} y2={y(t)} stroke={GRID} strokeWidth={t === 0 ? 1 : 0.5} />
@@ -108,7 +109,7 @@ export function TimeInBedChart({ days }: { days: Day[] }) {
                   {p.coSleep && (
                     <path
                       d={`M${cx - 4},${y(p.tib / 60) - 10} L${cx + 4},${y(p.tib / 60) - 10} L${cx},${y(p.tib / 60) - 4} Z`}
-                      fill={AMBER}
+                      fill={ROSE}
                     />
                   )}
                 </>
@@ -132,21 +133,21 @@ export function TimeInBedChart({ days }: { days: Day[] }) {
           )
         })}
       </svg>
-      <div className="mt-2 flex flex-wrap items-center gap-x-4 gap-y-1 text-xs text-label-secondary">
+      <div className="mt-2 flex flex-wrap items-center gap-x-4 gap-y-1 text-xs text-mist">
         <span className="flex items-center gap-1.5">
-          Quality
+          Rest
           {QUALITY_RAMP.map((c, i) => (
             <span key={c} className="flex items-center gap-0.5">
               <span className="inline-block h-2.5 w-2.5 rounded-sm" style={{ background: c }} />
-              <span className="text-label-muted">{i + 1}</span>
+              <span className="text-mist">{i + 1}</span>
             </span>
           ))}
         </span>
         <span className="flex items-center gap-1.5">
           <svg width="10" height="8" aria-hidden>
-            <path d="M1,1 L9,1 L5,7 Z" fill={AMBER} />
+            <path d="M1,1 L9,1 L5,7 Z" fill={ROSE} />
           </svg>
-          Co-sleep night
+          Visit night
         </span>
       </div>
     </div>
@@ -163,7 +164,7 @@ function roundedTopBar(x: number, top: number, w: number, h: number, r: number):
 export function BedtimeChart({ days, median }: { days: Day[]; median: number | null }) {
   const [hover, setHover] = useState<number | null>(null)
   const vals = days.flatMap((d) => (d.point ? [d.point.bedtime] : []))
-  if (!vals.length) return <p className="text-sm text-label-muted">No nights in this window.</p>
+  if (!vals.length) return <p className="text-sm text-mist">No nights in this window.</p>
   const lo = Math.floor((Math.min(...vals) - 15) / 60) * 60
   const hi = Math.ceil((Math.max(...vals) + 15) / 60) * 60
   const innerW = W - PAD.left - PAD.right
@@ -203,14 +204,14 @@ export function BedtimeChart({ days, median }: { days: Day[]; median: number | n
         ))}
         {median != null && median >= lo && median <= hi && (
           <g>
-            <line x1={PAD.left} x2={W - PAD.right} y1={y(median)} y2={y(median)} stroke={AMBER} strokeWidth={1} strokeDasharray="4 4" />
+            <line x1={PAD.left} x2={W - PAD.right} y1={y(median)} y2={y(median)} stroke={ROSE} strokeWidth={1} strokeDasharray="4 4" />
             <text x={W - PAD.right} y={y(median) - 4} textAnchor="end" fontSize={10} fill={AXIS_TEXT}>
               median {formatNightAxis(median)}
             </text>
           </g>
         )}
         {segments.map((d, i) => (
-          <path key={i} d={d} fill="none" stroke="#7A78E6" strokeWidth={2} strokeLinejoin="round" strokeLinecap="round" />
+          <path key={i} d={d} fill="none" stroke={LINE} strokeWidth={2} strokeLinejoin="round" strokeLinecap="round" />
         ))}
         {hover != null && (
           <line
@@ -230,8 +231,8 @@ export function BedtimeChart({ days, median }: { days: Day[]; median: number | n
                 cx={p.x}
                 cy={p.y}
                 r={hover === p.i ? 5 : 3.5}
-                fill="#7A78E6"
-                stroke="#1C1C1E"
+                fill={LINE}
+                stroke="#16291F"
                 strokeWidth={2}
               />
             ),
@@ -263,7 +264,7 @@ export function BedtimeChart({ days, median }: { days: Day[]; median: number | n
 
 export function RangeToggle({ value, onChange }: { value: 14 | 30; onChange: (v: 14 | 30) => void }) {
   return (
-    <div className="flex rounded-full bg-ink-raised p-0.5 text-xs font-medium" role="radiogroup" aria-label="Range">
+    <div className="flex rounded-full border border-line p-0.5 text-xs font-medium" role="radiogroup" aria-label="Range">
       {([14, 30] as const).map((v) => (
         <button
           key={v}
@@ -271,7 +272,7 @@ export function RangeToggle({ value, onChange }: { value: 14 | 30; onChange: (v:
           role="radio"
           aria-checked={value === v}
           onClick={() => onChange(v)}
-          className={`rounded-full px-3 py-1 ${value === v ? 'bg-ink-line text-label' : 'text-label-muted'}`}
+          className={`rounded-full px-3 py-1 ${value === v ? 'bg-sage text-night' : 'text-mist'}`}
         >
           {v}d
         </button>

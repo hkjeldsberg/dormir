@@ -226,3 +226,11 @@ test('csv escapes quotes/commas', () => {
   assert.ok(csv.includes('"bad, ""dream"""'))
   assert.equal(csv.trim().split('\n').length, 2)
 })
+
+test('durationWords spells the hero line', async () => {
+  const { durationWords } = await import('./words.ts')
+  assert.equal(durationWords(490), 'eight hours & ten minutes')
+  assert.equal(durationWords(60), 'one hour')
+  assert.equal(durationWords(421), 'seven hours & one minute')
+  assert.equal(durationWords(455), 'seven hours & thirty-five minutes')
+})

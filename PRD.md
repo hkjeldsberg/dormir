@@ -26,7 +26,13 @@ Designed with a **mobile-first, iPhone 17 Pro viewport priority** (thumb-friendl
 ### 2. Tech Stack & Architecture
 
 * **Framework:** Next.js (App Router, TypeScript)
-* **Styling & Motion:** Tailwind CSS, Framer Motion (Apple HIG-inspired dark-mode UI: deep OLED blacks `#000000`, elevated dark gray cards `#1C1C1E`, warm amber/indigo sleep accents, crisp SF-style typography)
+* **Styling & Motion:** Tailwind CSS, Motion. Design system **"Midnight Garden"** (source: `design/06 · Midnight Garden@2x.png`):
+  * **Colors:** night `#0F1D17` (background), surface `#16291F` (arch/cards), line `#2F4A3A`, cream `#EDEFE6` (text/CTA), mist `#A9B8AE` (secondary), sage `#8FB89A` (selected/wordmark), moss `#5E7A68` (inactive), rose `#D9A6A0` (accent: toggle, tab underline, selected ring).
+  * **Type:** EB Garamond (headings, row labels, italic wordmark `dormir`), Cormorant (old-style numerals for times/stats), Work Sans (UI labels/pills).
+  * **Shapes:** arched hero card, leaf-cut pills and CTA (small corners with one long tip), outlined unselected controls.
+  * **Ratings:** moon phases — new moon = 1 … full moon = 5; selected moon cream with rose ring.
+  * **Charts/heatmap:** validated sage ordinal ramp for Rest 1→5 (`#3f6650 #548069 #6d9a81 #8fb89a #bcd8c3`), rose markers for visit nights.
+  * **Copy:** garden voice — "Drifted off", "Woke in the night", "{child} came to visit", "What grew yesterday", Rest / Vigour, "Press the night into the book".
 * **Backend & Database:** Supabase (PostgreSQL using dedicated schema `dormir`)
 * **Data Access:** **Server-side only.** All reads/writes go through Server Actions / route handlers using the Supabase **service role key** (`SUPABASE_SERVICE_ROLE_KEY`, never exposed to the client). The browser never talks to Supabase directly and no Supabase key is shipped in the client bundle.
 * **Authentication:** Single shared password from env (same pattern as other personal apps: `iron-session` + `proxy.ts`).
@@ -74,12 +80,12 @@ All times are interpreted in the device's local timezone, stored per log in `tz`
 
 To keep morning logging under **15 seconds**, secondary factors are single-tap pill toggles, all defaulting to off:
 
-* **Meal after 20:00 (`late_meal`):** Dinner or a substantial meal after 20:00 (relevant on a later Spanish dinner schedule).
-* **Late Caffeine (`late_caffeine`):** Caffeine after 14:00.
-* **Alcohol (`alcohol`):** Any alcohol (even 1–2 drinks measurably suppresses REM sleep).
+* **Late supper (`late_meal`):** Dinner or a substantial meal after 20:00 (relevant on a later Spanish dinner schedule).
+* **Afternoon coffee (`late_caffeine`):** Caffeine after 14:00.
+* **Wine (`alcohol`):** Any alcohol (even 1–2 drinks measurably suppresses REM sleep).
 * **Room Too Warm (`room_too_warm`):** Thermal disruption.
 * **Hard Workout (`hard_workout`):** Intense training that day.
-* **Sick (`sick`):** You or the child unwell (major confounder—flagged nights can be excluded from Insights).
+* **Unwell (`sick`):** You or the child unwell (major confounder—flagged nights can be excluded from Insights).
 * **Notes (`notes`):** Optional 1-line text for anomalies (e.g., "bad dream", "teething").
 
 ---
@@ -188,12 +194,12 @@ Saving a night is an **upsert on `sleep_date`**, so re-submitting the same morni
   * **Smart Defaults:** `bedtime_at` = 7-day rolling median bedtime (fallback `23:00` until 3 nights exist); `wake_time_at` = current time rounded to nearest 5 min; `creatine_10g` = previous day's value. If today's log already exists, the screen opens it in edit mode.
   * **Missed Night Banner:** If yesterday's morning has no log, show a banner "Log yesterday?" that opens the form for that date (backfill). Dismissing (✕) is remembered per date on the device, so that date is never asked about again.
   * **Sleep Card:** Bedtime / wake time, latency pills, night-wakings stepper.
-  * **Co-Sleep Card:** Tapping *"{DORMIR_CHILD_NAME} came into bed"* smoothly expands an inline drawer (Framer Motion `AnimatePresence`) revealing:
+  * **Visit Card:** *"{CHILD_NAME} came to visit"* with a rose toggle; when on, a summary line ("at 02:00 · until morning") and an inline drawer (Motion `AnimatePresence`) revealing:
     * **Arrival** quick-pills: `23:00`, `00:00`, `01:00`, `02:00`, `03:00`, `04:00`, `05:00` + custom (15-min wheel).
     * **Until** pills: `Morning` (= wake time, default) + custom.
-  * **Factor Toggles:** Tactile, high-contrast pills for `10g Creatine` (with optional timing sub-pill), `Meal after 20:00`, `Caffeine >14:00`, `Alcohol`, `Too Warm`, `Hard Workout`, `Sick`.
-  * **Outcome Rating:** 5-step emoji/numeric selector for **Sleep Quality** and **Morning Energy** (both required to save).
-  * **Primary CTA:** Full-width sticky bottom button (`Save Night`) with optimistic UI. On failure: revert state + toast with **Retry** (form contents are preserved; no offline queue in v1).
+  * **"What grew yesterday" pills:** `Creatine 10g` (single pill, tap cycles off → morning → evening → off; sticky from yesterday), `Late supper`, `Afternoon coffee`, `Wine`, `Too warm`, `Hard workout`, `Unwell`.
+  * **Outcome Rating:** moon-phase selectors (new moon = 1 … full moon = 5) for **Rest** (`sleep_quality`) and **Vigour** (`morning_energy`), both required to save.
+  * **Primary CTA:** Full-width sticky leaf button ("Press the night into the book") with optimistic UI. On failure: revert state + message with **Retry** (form contents are preserved; no offline queue in v1).
 
 #### B. Screen 2: Insights & Correlation Engine
 

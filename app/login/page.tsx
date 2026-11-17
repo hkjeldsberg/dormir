@@ -2,6 +2,7 @@
 
 import { useState } from 'react'
 import { motion } from 'motion/react'
+import { Flower } from '@/components/ui'
 
 export default function LoginPage() {
   const [password, setPassword] = useState('')
@@ -39,29 +40,37 @@ export default function LoginPage() {
         initial={{ opacity: 0, y: 24 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ type: 'spring', stiffness: 260, damping: 26 }}
-        className="w-full max-w-sm space-y-4"
+        className="w-full max-w-sm"
       >
-        <div className="mb-8 text-center">
-          <div className="text-5xl" aria-hidden>🌙</div>
-          <h1 className="mt-3 text-3xl font-bold tracking-tight">Dormir</h1>
-        </div>
-        <input
-          type="password"
-          autoComplete="current-password"
-          autoFocus
-          value={password}
-          onChange={(e) => setPassword(e.target.value)}
-          placeholder="Password"
-          aria-label="Password"
-          className="w-full rounded-2xl bg-ink-card px-4 py-4 text-lg outline-none ring-indigo/60 placeholder:text-label-muted focus:ring-2"
-        />
-        {error && <p role="alert" className="text-center text-sm text-danger">{error}</p>}
-        <motion.button
-          whileTap={{ scale: 0.97 }}
-          disabled={busy || !password}
-          className="w-full rounded-2xl bg-amber py-4 text-lg font-semibold text-black disabled:opacity-40"
+        <div
+          className="mb-6 border border-line bg-surface px-6 pb-8 pt-12 text-center"
+          style={{ borderRadius: '50% 50% 28px 28px / 150px 150px 28px 28px' }}
         >
-          {busy ? 'Checking…' : 'Enter'}
+          <Flower size={60} className="mx-auto" />
+          <h1 className="mt-4 font-serif text-[52px] italic leading-none text-sage">dormir</h1>
+          <p className="mt-2 font-serif text-[18px] italic text-rose">the garden is resting</p>
+          <input
+            type="password"
+            autoComplete="current-password"
+            autoFocus
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+            placeholder="password"
+            aria-label="Password"
+            className="mt-8 h-14 w-full rounded-card border border-line bg-night px-4 text-center text-lg text-cream outline-none placeholder:text-moss focus:border-sage"
+          />
+          {error && (
+            <p role="alert" className="mt-3 text-sm text-rose">
+              {error}
+            </p>
+          )}
+        </div>
+        <motion.button
+          whileTap={{ scale: 0.98 }}
+          disabled={busy || !password}
+          className="h-[60px] w-full rounded-leaf-lg bg-cream font-serif text-[23px] text-night disabled:opacity-40"
+        >
+          {busy ? 'Opening…' : 'Open the book'}
         </motion.button>
       </motion.form>
     </main>

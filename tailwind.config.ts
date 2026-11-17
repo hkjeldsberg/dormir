@@ -1,45 +1,32 @@
 import type { Config } from 'tailwindcss'
 
+// "Midnight Garden" design system — colors sampled from design/06 · Midnight Garden@2x.png
 const config: Config = {
   content: ['./app/**/*.{ts,tsx}', './components/**/*.{ts,tsx}'],
   theme: {
     extend: {
       colors: {
-        ink: {
-          DEFAULT: '#000000',
-          card: '#1C1C1E',
-          raised: '#2C2C2E',
-          line: '#38383A',
-        },
-        label: {
-          DEFAULT: '#F5F5F7',
-          secondary: '#AEAEB2',
-          muted: '#8E8E93',
-        },
-        amber: {
-          DEFAULT: '#F5B041',
-          soft: '#3A2C12',
-        },
-        indigo: {
-          DEFAULT: '#7A78E6',
-          soft: '#23224A',
-        },
-        // Validated ordinal ramp for sleep_quality 1→5 on #1C1C1E (dataviz validator, dark)
-        q: {
-          1: '#4a47a3',
-          2: '#5b59c4',
-          3: '#716fdc',
-          4: '#8f8ded',
-          5: '#b6b7f8',
-        },
-        danger: '#FF6961',
+        night: '#0F1D17', // page background, inset fields
+        surface: '#16291F', // arch / cards
+        line: '#2F4A3A', // hairline borders
+        cream: '#EDEFE6', // primary text, CTA
+        mist: '#A9B8AE', // secondary text, labels
+        sage: { DEFAULT: '#8FB89A', soft: '#1F3A2B' }, // selected, logo
+        moss: '#5E7A68', // inactive moons, quiet marks
+        rose: '#D9A6A0', // accent: toggle, underline, selected ring
+        danger: '#E88A7D',
+        // Validated ordinal ramp for rest (sleep_quality) 1→5 on #16291F (dataviz validator, dark)
+        q: { 1: '#3f6650', 2: '#548069', 3: '#6d9a81', 4: '#8fb89a', 5: '#bcd8c3' },
       },
       fontFamily: {
-        sans: ['-apple-system', 'BlinkMacSystemFont', '"SF Pro Text"', '"SF Pro Display"', 'system-ui', 'sans-serif'],
+        serif: ['var(--font-serif)', 'Georgia', 'serif'],
+        sans: ['var(--font-sans)', 'system-ui', 'sans-serif'],
       },
-      spacing: {
-        'safe-top': 'env(safe-area-inset-top)',
-        'safe-bottom': 'env(safe-area-inset-bottom)',
+      borderRadius: {
+        // Leaf cuts: small corners with one long "tip"
+        leaf: '9px 9px 20px 9px',
+        'leaf-lg': '30px 8px 30px 6px',
+        card: '24px 12px 24px 12px',
       },
     },
   },

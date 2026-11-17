@@ -8,8 +8,8 @@ const BOOTSTRAP_ITERATIONS = 2000
 
 export type OutcomeKey = 'sleep_quality' | 'morning_energy' | 'total_duration_minutes'
 export const OUTCOMES: { key: OutcomeKey; label: string; unit: 'score' | 'minutes' }[] = [
-  { key: 'sleep_quality', label: 'Sleep quality', unit: 'score' },
-  { key: 'morning_energy', label: 'Morning energy', unit: 'score' },
+  { key: 'sleep_quality', label: 'Rest', unit: 'score' },
+  { key: 'morning_energy', label: 'Vigour', unit: 'score' },
   { key: 'total_duration_minutes', label: 'Time in bed', unit: 'minutes' },
 ]
 
@@ -259,7 +259,7 @@ export function computeInsights(allLogs: SleepLog[], opts: { includeSick: boolea
   if (opts.includeSick) factorKeys.push('sick')
   const factorCards: FactorCard[] = factorKeys.map((key) => ({
     key,
-    label: key === 'co_sleep_occurred' ? 'Co-sleep' : FACTOR_LABELS[key],
+    label: key === 'co_sleep_occurred' ? 'Visit' : FACTOR_LABELS[key],
     outcomes: compareOutcomes(
       logs.filter((l) => l[key]),
       logs.filter((l) => !l[key]),

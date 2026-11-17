@@ -5,17 +5,8 @@ import { AnimatePresence, motion } from 'motion/react'
 import { CheckInForm } from './CheckInForm'
 import { useLogs } from './LogsProvider'
 import { useToday } from './useToday'
+import { gardenDate } from './ui'
 import { addDays } from '@/lib/time'
-
-function prettyDate(date: string): string {
-  const [y, m, d] = date.split('-').map(Number)
-  return new Date(Date.UTC(y, m - 1, d)).toLocaleDateString('en-GB', {
-    weekday: 'long',
-    day: 'numeric',
-    month: 'long',
-    timeZone: 'UTC',
-  })
-}
 
 const DISMISS_KEY = 'dormir:backfill-dismissed'
 
@@ -27,6 +18,10 @@ function readDismissed(): string | null {
   }
 }
 
+export function Wordmark({ className = '' }: { className?: string }) {
+  return <span className={`font-serif text-[34px] italic leading-none text-sage ${className}`}>dormir</span>
+}
+
 export function CheckIn({ sticky }: { sticky: boolean }) {
   const today = useToday()
   const { logs } = useLogs()
@@ -35,13 +30,12 @@ export function CheckIn({ sticky }: { sticky: boolean }) {
   const [dismissedDate, setDismissedDate] = useState<string | null>(null)
   useEffect(() => setDismissedDate(readDismissed()), [])
 
-  if (!today) return <div className="h-96 animate-pulse rounded-2xl bg-ink-card" aria-busy />
+  if (!today) return <div className="h-[520px] animate-pulse rounded-card bg-surface" aria-busy />
 
   const active = date ?? today
   const yesterday = addDays(today, -1)
-  const hasAny = logs.length > 0
   const missedYesterday =
-    hasAny && dismissedDate !== yesterday && active === today && !logs.some((l) => l.sleep_date === yesterday)
+    logs.length > 0 && dismissedDate !== yesterday && active === today && !logs.some((l) => l.sleep_date === yesterday)
 
   const dismiss = () => {
     setDismissedDate(yesterday)
@@ -51,23 +45,19 @@ export function CheckIn({ sticky }: { sticky: boolean }) {
       // storage unavailable (private mode) — dismissal lasts for this session only
     }
   }
-  const logged = logs.some((l) => l.sleep_date === active)
 
   return (
     <div>
-      <header className="mb-4 flex items-end justify-between">
-        <div>
-          <p className="text-sm font-medium text-label-muted">{prettyDate(active)}</p>
-          <h1 className="text-[28px] font-bold tracking-tight">
-            {active === today ? 'Good morning' : 'Backfill'}
-            {logged && <span className="ml-2 align-middle text-sm font-medium text-amber">logged ✓</span>}
-          </h1>
+      <header className="mb-6 flex items-center justify-between">
+        <Wordmark />
+        <div className="text-right">
+          <p className="lining text-[15px] text-mist">{gardenDate(active)}</p>
+          {active !== today && (
+            <button type="button" onClick={() => setDate(null)} className="font-serif text-[15px] italic text-rose">
+              back to today
+            </button>
+          )}
         </div>
-        {active !== today && (
-          <button type="button" onClick={() => setDate(null)} className="text-sm font-medium text-indigo">
-            Back to today
-          </button>
-        )}
       </header>
 
       <AnimatePresence>
@@ -78,11 +68,12 @@ export function CheckIn({ sticky }: { sticky: boolean }) {
             exit={{ opacity: 0, height: 0 }}
             className="overflow-hidden"
           >
-            <div className="mb-3 flex items-center justify-between rounded-2xl bg-indigo-soft px-4 py-3">
-              <button type="button" onClick={() => setDate(yesterday)} className="text-left text-[15px] font-medium">
-                Yesterday isn’t logged. <span className="text-indigo">Log it →</span>
+            <div className="mb-4 flex items-center justify-between rounded-card border border-line px-4 py-3">
+              <button type="button" onClick={() => setDate(yesterday)} className="text-left">
+                <span className="font-serif text-[18px] italic text-cream">Yesterday left a blank page.</span>{' '}
+                <span className="text-[14px] text-rose">Fill it →</span>
               </button>
-              <button type="button" aria-label="Dismiss" onClick={dismiss} className="px-2 text-label-muted">
+              <button type="button" aria-label="Dismiss" onClick={dismiss} className="px-2 text-mist">
                 ✕
               </button>
             </div>
@@ -94,6 +85,7 @@ export function CheckIn({ sticky }: { sticky: boolean }) {
         key={active}
         sleepDate={active}
         isToday={active === today}
+        heading={active === today ? 'Good morning' : 'A night past'}
         sticky={sticky}
         onSaved={active !== today ? () => setDate(null) : undefined}
       />
